@@ -1,6 +1,7 @@
 <template>
   <view class="goods-item">
     <view class="goods-left-box">
+      <radio :checked="goods.goods_status" color="#c00000" v-if="showredio" @click="redioClick"></radio>
       <image :src="goods.goods_small_logo || defaultPic" mode="" class="goods-img"></image>
     </view>
     <view class="goods-right-box">
@@ -11,6 +12,7 @@
         <view class="price">
           ￥{{goods.goods_price | tofixed}}
         </view>
+        <uni-number-box :value="goods.goods_count" :min="1" v-if="shownum" @change="numChenge"></uni-number-box>
       </view>
     </view>
   </view>
@@ -23,6 +25,14 @@
       goods: {
         type: Object,
         default: {}
+      },
+      showredio: {
+        type: Boolean,
+        default: false
+      },
+      shownum: {
+        type:Boolean,
+        default:false
       }
     },
     data() {
@@ -35,6 +45,20 @@
       tofixed(num) {
         return Number(num).toFixed(2)
       }
+    },
+    methods: {
+      redioClick() {
+        this.$emit('redio-change', {
+          goods_id: this.goods.goods_id,
+          goods_status: !this.goods.goods_status
+        })
+      },
+      numChenge(newVal) {
+        this.$emit('num-change',{
+          goods_id: this.goods.goods_id,
+          goods_count: Number(newVal)
+        })
+      }
     }
   }
 </script>
@@ -46,6 +70,9 @@
 
     .goods-left-box {
       margin-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
       .goods-img {
         height: 100px;
@@ -58,15 +85,22 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      flex: 1;
 
       .goods-name {
         font-size: 13px
       }
 
-      .price {
-        color: #c00000;
-        font-size: 16px;
+      .goods-info-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .price {
+          color: #c00000;
+          font-size: 16px;
+        }
       }
+
     }
 
   }
